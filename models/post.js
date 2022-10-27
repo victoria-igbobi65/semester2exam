@@ -12,7 +12,7 @@ const postSchema = new Schema({
         type: String,
         required: [true, 'Please provide description!']
     },
-    tegs: {
+    tags: {
         type: String,
         required: [true, 'Please provide tag!']
     },
@@ -38,10 +38,19 @@ const postSchema = new Schema({
     },
     owner_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'users',
+        required: true
     }
 },
 {timestamps: true})
+
+
+postSchema.pre('save', async function(next){
+    /*calculate read time*/
+    const readTime = Math.round(this.body.split(' ').length / 200)
+    this.reading_time= readTime < 1? `< ${readTime + 1} mins read`: `${readTime} mins read`
+    next()
+})
 
 
 const Post = mongoose.model('posts', postSchema)
