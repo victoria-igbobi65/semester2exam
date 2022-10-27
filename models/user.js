@@ -17,12 +17,12 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'Email address is required!'],
         unique: true,
+        lowercase: true,
         validate: [validator.isEmail, 'Invalid email!']
     },
     password: {
         type: String,
         required: [true, 'Password is required!'],
-        lowercase: true,
         minlength: [8, 'Password must not be less than 8 characters!']
     }
 })
@@ -30,11 +30,18 @@ const userSchema = new Schema({
 
 //A DOCUMENT MIDDLEWARE THAT HASHES USER'S PASSWORD
 userSchema.pre('save', async function(next){
-    this.password = await bcrypt.hash(this.password, 12)
-
+    this.password = await bcrypt.hash(this.password, 10)
     next()
 })
 
+
+// A MIDDLEWARE TO CHECK PASSWORD
+userSchema.methods.correctPassword = async function (password) {
+    const user = this;
+    const compare = await bcrypt.compare(password, user.password);
+
+    return compare;
+};
 
 
 const User = mongoose.model('users', userSchema)
