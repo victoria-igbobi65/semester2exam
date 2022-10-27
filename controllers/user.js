@@ -1,4 +1,14 @@
+const jwt = require('jsonwebtoken')
+
 const User = require('../models/user')
+const AppError = require('../utils/appError')
+require('dotenv').config()
+
+const signToken = id => {
+    return jwt.sign({id}, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRESIN
+    })
+}
 
 exports.createUser = async (req, res, next) =>{
     try{
@@ -20,3 +30,32 @@ exports.createUser = async (req, res, next) =>{
         })
     }
 }
+
+
+ exports.login = async(req, res, next) => {
+    try{
+        const { email, password } = req.body;
+
+        /*Find user*/
+        const user = await User.findOne({ email });
+
+        /*check if user is not found or password incorrect*/
+        if (!user || !(await user.correctPassword(password))) {
+          return next(new AppError("Incorrect email or password!", 401));
+        }
+
+        /*Generate token for user*/
+        const token = signToken(user._id);
+
+        return res.status(200).json({
+          status: true,
+          token,
+        });
+    }
+    catch(err){
+        res.status(400).json({
+            status: false,
+            err: err
+        })
+    }
+ }
