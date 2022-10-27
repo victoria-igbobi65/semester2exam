@@ -5,8 +5,12 @@ const userRouter = express.Router()
 
 
 userRouter
-    .route('/')
+    .route('/signup')
     .post(userController.createUser)
 
+
+userRouter
+    .route('/login')
+    .post(userController.login)
 
 module.exports=userRouter
