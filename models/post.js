@@ -34,6 +34,10 @@ const postSchema = new Schema({
     body:{
         type: String,
         required: [true, 'Please provide body!']
+    },
+    owner_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users'
     }
 },
 {timestamps: true})
