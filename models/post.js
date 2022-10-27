@@ -5,7 +5,8 @@ const Schema = mongoose.Schema
 const postSchema = new Schema({
     title: {
         type: String,
-        required: [true, 'Please provide title!']
+        required: [true, 'Please provide title!'],
+        unique: [true, 'Title must be unique!']
     },
     description:{
         type: String,
