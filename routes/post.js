@@ -8,7 +8,11 @@ require('../utils/auth')/*Auth middleware*/
 postRouter
     .route('/')
     .post(passport.authenticate("jwt", {session: false}), postController.createPost)
-    
+
+postRouter
+  .route("/:id")
+  .post(
+    passport.authenticate("jwt", { session: false }), postController.updatePost);
 
 
 module.exports=postRouter
