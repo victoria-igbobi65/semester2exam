@@ -10,9 +10,16 @@ postRouter
     .post(passport.authenticate("jwt", {session: false}), postController.createPost)
 
 postRouter
-  .route("/:id")
-  .post(
-    passport.authenticate("jwt", { session: false }), postController.updatePost);
+    .route("/:id")
+    .post(passport.authenticate("jwt", { session: false }), postController.updatePost)
+    .delete(passport.authenticate("jwt", { session: false }), postController.deletePost);
+  
+
+postRouter
+  .route("/me")
+  .get(
+    passport.authenticate("jwt", { session: false }), postController.getAllMyPost
+  );
 
 
 module.exports=postRouter
