@@ -22,7 +22,10 @@ const postSchema = new Schema({
     },
     state:{
         type: String,
-        enum: ["draft", "published"],
+        enum: {
+            values: ["draft", "published"],
+            message: '{VALUE} is not supported!'
+        },
         default: "draft"
     },
     read_count:{
