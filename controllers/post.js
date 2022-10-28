@@ -33,23 +33,20 @@ exports.updatePost = async(req, res, next) => {
     
     try{
         const { id } = req.params;
-        const visitor = req.user._id;
+        const owner = req.user._id;
 
         /*1 Checking if the requested post belongs to the visitor*/
-        const post = await Post.findOne({ _id: id, owner_id: visitor });
+        const post = await Post.findOne({ _id: id, owner_id: owner });
 
-        /*2 Error message*/
-        if (!post) {
-            return next(new AppError("Check the post Id and try again!", 400));}
-
-        /*3 Getting data to update*/
+        /*2 Getting data to update*/
         if (req.body.body) {
-            post.body = req.body.body}
+            post.body = req.body.body
+        }
         if (req.body.state) {
             /*Only change post state if its in draft*/
             if (post.state === 'draft'){
                 post.state = req.body.state;
-            }}
+        }}
 
         await post.save({ validateBeforeSave: true });
         
@@ -69,15 +66,10 @@ exports.updatePost = async(req, res, next) => {
 exports.deletePost = async(req, res, next) => {
     try{
         const {id} = req.params
-        const visitor = req.user._id
+        const owner = req.user._id
 
-        const post = await Post.findOne({id: id, owner_id: visitor})
+        const post = await Post.deleteOne({ id: id, owner_id: owner });
 
-        if (!post){
-            return next(new AppError('Check the post Id and try again!'))
-        }
-
-        await Post.deleteOne({id: id})
         return res.status(200).json({
             status: true,
             msg: null
@@ -104,7 +96,6 @@ exports.getAllMyPost = async (req, res, next) => {
         /*Handling state*/
         if (req.query.state){
             queryObj.state = req.query.state
-
         }
 
         /*posts by User*/
