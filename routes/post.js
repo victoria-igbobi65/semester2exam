@@ -3,7 +3,8 @@ const passport = require('passport')
 
 const postController = require('../controllers/post')
 const postRouter = express.Router()
-require('../utils/auth')/*Auth middleware*/
+const auth = require('../controllers/auth')
+require('../controllers/auth')/*Auth middleware*/
 
 postRouter
     .route('/')
@@ -11,15 +12,13 @@ postRouter
 
 postRouter
     .route("/:id")
-    .post(passport.authenticate("jwt", { session: false }), postController.updatePost)
-    .delete(passport.authenticate("jwt", { session: false }), postController.deletePost);
+    .post(passport.authenticate("jwt", { session: false }), auth.protect, postController.updatePost)
+    .delete(passport.authenticate("jwt", { session: false }),auth.protect, postController.deletePost);//
   
 
 postRouter
-  .route("/me")
-  .get(
-    passport.authenticate("jwt", { session: false }), postController.getAllMyPost
-  );
+    .route("/me")
+    .get(passport.authenticate("jwt", { session: false }), postController.getAllMyPost);
 
 
 module.exports=postRouter
