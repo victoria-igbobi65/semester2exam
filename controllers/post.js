@@ -1,123 +1,120 @@
 const Post = require('../models/post')
 const AppError = require('../utils/appError')
+const catchAsync = require('../utils/catchAsync')
 
-exports.createPost = async(req, res, next) => {
-    try{
-        const { title, description, tags, author, body } = req.body;
-        const owner = req.user._id;
+/*Create Post*/
+exports.createPost = catchAsync( async(req, res, next) => {
 
-        /*Post to save*/
-        const newPost = await Post.create({
-          title: title,
-          description: description,
-          tags: tags,
-          author: author,
-          body: body,
-          owner_id: owner,
-        });
+    const { title, description, tags, author, body } = req.body;
+    const owner = req.user._id;
 
-        res.status(200).json({
-          status: true,
-          newPost,
-        });
-    }
-    catch(err){
-        return res.status(400).json({
-            status: false,
-            err: err
-        })
-    }
-}
+    /*Post to save*/
+    const newPost = await Post.create({
+        title: title,
+        description: description,
+        tags: tags,
+        author: author,
+        body: body,
+        owner_id: owner,
+    });
 
-exports.updatePost = async(req, res, next) => {
+    res.status(200).json({
+        status: true,
+        newPost,
+    });
     
-    try{
-        const { id } = req.params;
-        const owner = req.user._id;
+})
 
-        /*1 Checking if the requested post belongs to the visitor*/
-        const post = await Post.findOne({ _id: id, owner_id: owner });
+/*Update Post*/
+exports.updatePost = catchAsync( async(req, res, next) => {
+    const { id } = req.params;
+    var query = req.body;
+    var postState = req.state;
 
-        /*2 Getting data to update*/
-        if (req.body.body) {
-            post.body = req.body.body
-        }
-        if (req.body.state) {
-            /*Only change post state if its in draft*/
-            if (post.state === 'draft'){
-                post.state = req.body.state;
-        }}
-
-        await post.save({ validateBeforeSave: true });
-        
-        return res.status(200).json({
-            status: true,
-            post: post})
-    }
-    catch(err){
-        return res.status(500).json({
-            status: false,
-            err: err
-        })
+    /*Check state of post*/
+    if (postState == "published" && query.state) {
+        delete query.state;
     }
 
-}
+    /*Update post*/
+    const post = await Post.findByIdAndUpdate(id, { $set: query }, { new: true, runValidators: true });
 
-exports.deletePost = async(req, res, next) => {
-    try{
-        const {id} = req.params
-        const owner = req.user._id
+    /*Success response*/
+    return res.status(200).json({
+        status: true,
+        post: post,
+    });   
+    
+})
 
-        const post = await Post.deleteOne({ id: id, owner_id: owner });
+/*Delete post*/
+exports.deletePost = catchAsync(async(req, res, next) => {
 
-        return res.status(200).json({
-            status: true,
-            msg: null
-        })
+    const { id } = req.params;
+    const owner = req.user._id;
+
+    const post = await Post.deleteOne({ id: id, owner_id: owner });
+
+    return res.status(200).json({
+      status: true,
+      msg: null,
+    });
+    
+})
+
+/*Get all post belonging to a user*/
+exports.getAllMyPost = catchAsync(async (req, res, next) => {
+    const visitor = req.user._id;
+    var queryObj = { owner_id: visitor };
+
+    /*Getting page and limit*/
+    const page = +req.query.page || 1;
+    const limit = +req.query.limit || 10;
+    const skip = (page - 1) * limit;
+
+    /*Handling state*/
+    if (req.query.state) {
+      queryObj.state = req.query.state;
     }
-    catch(err){
-        return res.status(400).json({
-            status: false,
-            err: err
-        })
+
+    /*All posts by a User*/
+    const visitorPosts = await Post
+                            .find(queryObj)
+                            .skip(skip)
+                            .limit(limit);
+
+    /*Success response*/
+    return res.status(200).json({
+      status: true,
+      numberOfPost: visitorPosts.length,
+      page: page,
+      posts: visitorPosts,
+    });
+})
+
+/*Get a single blog post*/
+exports.getPostById = catchAsync( async (req, res, next) => {
+    const {id} = req.params
+
+    const post = await Post.findById(id)
+                                .where({state: {$eq: "published"}})
+                                .populate("owner_id")
+                                .select({__v: 0})
+
+    /*Check if post was not found*/
+    if (!post){
+        return next(new AppError(`post with ID ${id} doesn't exist`, 404))
     }
-}
 
-exports.getAllMyPost = async (req, res, next) => {
-    try{
-        const visitor = req.user._id
-        var queryObj = {owner_id: visitor}
+    /*Increment count*/
+    post.read_count = post.read_count += 1
+    await post.save()
 
-        /*Getting page and limit*/
-        const page = +req.query.page || 1
-        const limit = +req.query.limit || 10
-        const skip = (page - 1) * limit
+    /*Success response*/
+    return res.status(200).json({
+        status: true,
+        post: post
+    });
 
-        /*Handling state*/
-        if (req.query.state){
-            queryObj.state = req.query.state
-        }
-
-        /*posts by User*/
-        const visitorPosts = await Post
-                                    .find(queryObj)
-                                    .skip(skip)
-                                    .limit(limit)
-                                
-        /*Success response*/
-        return res.status(200).json({
-            status: true,
-            numberOfPost: visitorPosts.length,
-            page: page,
-            posts: visitorPosts
-        })
-
-    }
-    catch(err){
-        console.log("hey")
-        return res.status(400).json({
-            status: false,
-            err: err,
-        });
-    }
-}
+    
+})
