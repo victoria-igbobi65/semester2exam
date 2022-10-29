@@ -12,10 +12,10 @@ postRouter
 
 postRouter
     .route("/:id")
-    .post(passport.authenticate("jwt", { session: false }), auth.protect, postController.updatePost)
-    .delete(passport.authenticate("jwt", { session: false }),auth.protect, postController.deletePost);//
+    .patch(passport.authenticate("jwt", { session: false }), auth.protect, postController.updatePost)
+    .delete(passport.authenticate("jwt", { session: false }),auth.protect, postController.deletePost)
+    .get(postController.getPostById)
   
-
 postRouter
     .route("/me")
     .get(passport.authenticate("jwt", { session: false }), postController.getAllMyPost);
