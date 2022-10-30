@@ -1,2 +1,4 @@
 .env
 node_modules
+utils/auth.js
+db.js
