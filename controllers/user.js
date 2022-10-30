@@ -15,7 +15,7 @@ exports.createUser = async (req, res, next) => {
       password: password,
     });
 
-    res.status(200).json({ status: true, newUser: newUser });
+    res.status(201).json({ status: true, newUser: newUser });
   } catch (err) {
     res.status(500).json({
       status: false,
