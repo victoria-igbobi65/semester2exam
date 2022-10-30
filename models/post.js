@@ -38,7 +38,7 @@ const postSchema = new Schema({
         default: 0
     },
     reading_time: {
-        type: String,
+        type: Number,
     },
     body:{
         type: String,
@@ -56,7 +56,7 @@ const postSchema = new Schema({
 postSchema.pre('save', async function(next){
     /*calculate read time*/
     const readTime = Math.round(this.body.split(' ').length / 200)
-    this.reading_time= readTime < 1? `< ${readTime + 1} mins read`: `${readTime} mins read`
+    this.reading_time= readTime < 1? readTime + 1: {readTime}
     next()
 })
 
