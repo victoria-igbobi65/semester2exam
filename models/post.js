@@ -14,11 +14,11 @@ const postSchema = new Schema({
         required: [true, 'Please provide description!'],
         lowercase: true
     },
-    tags: {
+    tags: [{
         type: String,
         required: [true, 'Please provide tag!'],
         lowercase: true
-    },
+    }],
     author:{
         type: String,
         required: [true, 'Please provide author!'],
