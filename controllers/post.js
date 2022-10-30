@@ -160,7 +160,6 @@ exports.getAllPost = catchAsync( async(req, res, next) => {
 
     if (req.query.tags) {
       queryObj.tags = { $in: [req.query.tags] };
-      console.log(queryObj);
     }
 
     
