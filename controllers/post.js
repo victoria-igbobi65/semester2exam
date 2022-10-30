@@ -36,7 +36,6 @@ exports.updatePost = catchAsync( async(req, res, next) => {
         delete query.state;
     }
 
-    /*Update post*/
     const post = await Post.findByIdAndUpdate(id, { $set: query }, { new: true, runValidators: true });
 
     /*Success response*/
@@ -98,7 +97,7 @@ exports.getPostById = catchAsync( async (req, res, next) => {
 
     const post = await Post.findById(id)
                                 .where({state: {$eq: "published"}})
-                                .populate("owner_id")
+                                .populate({path: "owner_id", select: {__v: 0}})
                                 .select({__v: 0})
 
     /*Check if post was not found*/
@@ -117,4 +116,38 @@ exports.getPostById = catchAsync( async (req, res, next) => {
     });
 
     
+})
+
+/*Get all blog posts*/
+exports.getAllPost = catchAsync( async(req, res, next) => {
+
+    //FILTERING
+    let queryObj = { ...req.query };
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    excludedFields.forEach((el) => delete queryObj[el]);
+    
+    /*Persist user input to lowercase */
+    queryObj = Object.fromEntries( Object.entries(queryObj).map(([key, value]) => [key, value.toLowerCase()]))
+
+    /*Sorting document*/
+    const sortBy = req.query.sort? req.query.sort.split(",").join(" "): "-createdAt"
+    
+    /*Pagination*/
+    const page = +req.query.page || 1
+    const limit = +req.query.limit || 10
+    const skip = (page - 1) * limit
+
+    /*Querying posts*/
+    const post = await Post
+                        .find(queryObj)
+                        .sort(sortBy)
+                        .skip(skip)
+                        .limit(limit)
+
+    return res.status(200).json({
+        status: true,
+        page: page,
+        numberOfPosts: post.length,
+        posts: post
+    })
 })
