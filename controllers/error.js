@@ -1,9 +1,14 @@
 require('dotenv').config()
+const AppError = require('../utils/appError')
 
-const prodValidationError = err => {
-  console.log('Hello')
+/*Defined Error 1*/
+const handleCastErrorDB = err => {
+  const message = `Invalid ${err.path}: ${err.value}`
+  return new AppError(message, 400)
+
 }
 
+/*Development error handler*/
 const devHandler = (err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const status = err.status || "error";
@@ -14,9 +19,14 @@ const devHandler = (err, req, res, next) => {
   });
 }
 
+/*Production error handler*/
 var prodHandler = (err, req, res, next) => {
-  if (err.name === 'ValidationError') {err = prodValidationError(err)}
 
+  /*Defined Errors*/
+  if (err.name === 'ValidationError') {err = prodValidationError(err)}
+  if (err.name === 'CastError') {err = handleCastErrorDB(err)}
+
+  /*Response Handler for defined errors*/
   if (err.isOperational){
     return res.status(err.statusCode).json({
       status: err.status,
@@ -24,6 +34,7 @@ var prodHandler = (err, req, res, next) => {
     })
   }
 
+  /*Response Handlers for undefined errors*/
   else {
     return res.status(500).json({
       status: "error",
