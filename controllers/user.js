@@ -5,6 +5,7 @@ const helpers = require("../utils/helpers");
 
 exports.createUser = async (req, res, next) => {
   try {
+    console.log(req.body)
     const { first_name, last_name, email, password } = req.body;
 
     const newUser = await User.create({
@@ -28,10 +29,10 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    /*Find user*/
-    const user = await User.findOne({ email });
+      /*Find user*/
+    const user = await User.findOne({ email }).select("+password")
 
-    /*check if user is not found or password incorrect*/
+      /*check if user is not found or password incorrect*/
     if (!user || !(await user.correctPassword(password))) {
       return next(new AppError("Incorrect email or password!", 401));
     }
