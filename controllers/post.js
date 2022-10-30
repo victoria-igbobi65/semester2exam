@@ -5,7 +5,6 @@ const catchAsync = require('../utils/catchAsync')
 /*Create Post*/
 exports.createPost = catchAsync( async(req, res, next) => {
 
-
     const { title, description, tags, author, body } = req.body;
     const owner = req.user._id;
 
@@ -19,7 +18,8 @@ exports.createPost = catchAsync( async(req, res, next) => {
         owner_id: owner,
     });
 
-    res.status(201).json({
+    /*Success response*/
+    return res.status(201).json({
         status: true,
         newPost,
     });
@@ -28,6 +28,7 @@ exports.createPost = catchAsync( async(req, res, next) => {
 
 /*Update Post Details*/
 exports.updatePost = catchAsync( async(req, res, next) => {
+
     const { id } = req.params;
     var query = req.body;
 
@@ -48,11 +49,12 @@ exports.updatePost = catchAsync( async(req, res, next) => {
 
 /*Update Post state*/
 exports.updateState = catchAsync( async( req, res, next) =>{
+
     const {id} = req.params
     const state = req.body.state
     var postState = req.state;
 
-    /*Check state of post*/
+    /*Check state of post if its already pudated*/
     if (postState == "published" && state ) {
       return next(new AppError('Invalid Operation!', 400))
     }
@@ -60,6 +62,7 @@ exports.updateState = catchAsync( async( req, res, next) =>{
     /*Update state*/
     const post = await Post.findByIdAndUpdate(id, { $set: {state: state} }, { new: true, runValidators: true });
 
+    /*Success response*/
     return res.status(200).json({
         status: true,
         post: post
@@ -73,8 +76,10 @@ exports.deletePost = catchAsync(async(req, res, next) => {
     const { id } = req.params;
     const owner = req.user._id;
 
+    /*Delete post*/
     const post = await Post.deleteOne({ id: id, owner_id: owner });
 
+    /*success response*/
     return res.status(200).json({
       status: true,
       msg: null,
@@ -84,6 +89,7 @@ exports.deletePost = catchAsync(async(req, res, next) => {
 
 /*Get all post belonging to a user*/
 exports.getAllMyPost = catchAsync(async (req, res, next) => {
+
     const visitor = req.user._id;
     var queryObj = { owner_id: visitor };
 
@@ -147,11 +153,16 @@ exports.getAllPost = catchAsync( async(req, res, next) => {
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach((el) => delete queryObj[el]);
 
+    
     /*Persist user input to lowercase */
     queryObj = Object.fromEntries( Object.entries(queryObj).map(([key, value]) => [key, value.toLowerCase()]))
-
-    /*Sorting document*/
     const sortBy = req.query.sort? req.query.sort.split(",").join(" "): "-createdAt"
+
+    if (req.query.tags) {
+      queryObj.tags = { $in: [req.query.tags] };
+      console.log(queryObj);
+    }
+
     
     /*Pagination*/
     const page = +req.query.page || 1
