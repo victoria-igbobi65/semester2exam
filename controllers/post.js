@@ -5,6 +5,7 @@ const catchAsync = require('../utils/catchAsync')
 /*Create Post*/
 exports.createPost = catchAsync( async(req, res, next) => {
 
+
     const { title, description, tags, author, body } = req.body;
     const owner = req.user._id;
 
@@ -125,7 +126,7 @@ exports.getAllPost = catchAsync( async(req, res, next) => {
     let queryObj = { ...req.query };
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach((el) => delete queryObj[el]);
-    
+
     /*Persist user input to lowercase */
     queryObj = Object.fromEntries( Object.entries(queryObj).map(([key, value]) => [key, value.toLowerCase()]))
 
@@ -144,6 +145,7 @@ exports.getAllPost = catchAsync( async(req, res, next) => {
                         .skip(skip)
                         .limit(limit)
 
+    /*Success response*/
     return res.status(200).json({
         status: true,
         page: page,
