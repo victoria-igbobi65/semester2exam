@@ -26,16 +26,10 @@ exports.createPost = catchAsync( async(req, res, next) => {
     
 })
 
-/*Update Post*/
+/*Update Post Details*/
 exports.updatePost = catchAsync( async(req, res, next) => {
     const { id } = req.params;
     var query = req.body;
-    var postState = req.state;
-
-    /*Check state of post*/
-    if (postState == "published" && query.state) {
-        delete query.state;
-    }
 
     const post = await Post.findByIdAndUpdate(id, { $set: query }, { new: true, runValidators: true });
 
@@ -46,6 +40,27 @@ exports.updatePost = catchAsync( async(req, res, next) => {
     });   
     
 })
+
+/*Update Post state*/
+exports.updateState = catchAsync( async( req, res, next) =>{
+    const {id} = req.params
+    const state = req.body.state
+    var postState = req.state;
+
+    /*Check state of post*/
+    if (postState == "published" && state ) {
+      return next(new AppError('Invalid Operation!', 400))
+    }
+
+    /*Update state*/
+    const post = await Post.findByIdAndUpdate(id, { $set: state }, { new: true, runValidators: true });
+
+    return res.status(200).json({
+        status: true,
+        post: post
+    })
+})
+
 
 /*Delete post*/
 exports.deletePost = catchAsync(async(req, res, next) => {
