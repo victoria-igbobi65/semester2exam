@@ -26,10 +26,7 @@ const postSchema = new Schema({
     },
     state:{
         type: String,
-        enum: {
-            values: ["draft", "published"],
-            message: '{VALUE} is not supported!'
-        },
+        enum: ["draft", "published"],
         lowercase: true,
         default: "draft"
     },
