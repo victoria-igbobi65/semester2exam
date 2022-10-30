@@ -7,6 +7,10 @@ const auth = require('../controllers/auth')
 require('../controllers/auth')/*Auth middleware*/
 
 postRouter
+    .route('/update-state/:id')
+    .patch(passport.authenticate("jwt", { session: false }), auth.protect, postController.updateState)
+
+postRouter
     .route('/')
     .post(passport.authenticate("jwt", { session: false }), postController.createPost)
     .get(postController.getAllPost)
@@ -21,8 +25,7 @@ postRouter
     .route("/:id")
     .patch(passport.authenticate("jwt", { session: false }), auth.protect, postController.updatePost)
     .delete(passport.authenticate("jwt", { session: false }),auth.protect, postController.deletePost)
-    .get(postController.getPostById)
-  
+    .get(postController.getPostById) 
 
 
 module.exports=postRouter
