@@ -8,8 +8,14 @@ require('../controllers/auth')/*Auth middleware*/
 
 postRouter
     .route('/')
-    .post(passport.authenticate("jwt", {session: false}), postController.createPost)
+    .post(passport.authenticate("jwt", { session: false }), postController.createPost)
     .get(postController.getAllPost)
+
+
+postRouter
+  .route("/me")
+  .get(passport.authenticate("jwt", { session: false }), postController.getAllMyPost);
+
 
 postRouter
     .route("/:id")
@@ -17,9 +23,6 @@ postRouter
     .delete(passport.authenticate("jwt", { session: false }),auth.protect, postController.deletePost)
     .get(postController.getPostById)
   
-postRouter
-    .route("/me")
-    .get(passport.authenticate("jwt", { session: false }), postController.getAllMyPost);
 
 
 module.exports=postRouter
