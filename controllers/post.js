@@ -10,12 +10,12 @@ exports.createPost = catchAsync( async(req, res, next) => {
 
     /*Post to save*/
     const newPost = await Post.create({
-        title: title,
-        description: description,
-        tags: tags,
-        author: author,
-        body: body,
-        owner_id: owner,
+      title: title,
+      description: description,
+      tags: (tags.trim()).split(/[, ]+/),
+      author: author,
+      body: body,
+      owner_id: owner,
     });
 
     /*Success response*/
