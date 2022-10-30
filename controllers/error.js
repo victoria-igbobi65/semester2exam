@@ -1,6 +1,7 @@
 require('dotenv').config()
 const AppError = require('../utils/appError')
 
+/*Defined error*/
 const prodValidationError = err => {
   return new AppError(err.message, 400)
 }
@@ -12,9 +13,9 @@ const handleCastErrorDB = err => {
 
 }
 
-
 const handleDuplicateFieldsDb = (err) => {
-    const value = err.keyValue.name
+
+    const value = err.keyValue.title;
     const message = `Duplicate field value < ${value} >: Please use another value!`;
     return new AppError(message, 400)
 };
