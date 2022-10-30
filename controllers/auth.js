@@ -40,12 +40,14 @@ exports.protect = async (req, res, next) => {
   if (!post){
     return next(new AppError(`Post with ID ${id} wasn't found`, 404))
   }
+  
   /*Check if visitor is owner of post*/
   if (post.owner_id.equals(visitor)){
     req.state = post.state
     return next()
   }
+
   /*Unauthorize message*/
-  return next('unauthorized action!', 401)
+  return next(new AppError('unauthorized action!', 401))
 
 }
