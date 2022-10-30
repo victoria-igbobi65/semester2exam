@@ -31,6 +31,11 @@ exports.updatePost = catchAsync( async(req, res, next) => {
     const { id } = req.params;
     var query = req.body;
 
+    /*Delete state from query*/
+    if (req.body.state){
+        delete query.state
+    }
+
     const post = await Post.findByIdAndUpdate(id, { $set: query }, { new: true, runValidators: true });
 
     /*Success response*/
@@ -53,7 +58,7 @@ exports.updateState = catchAsync( async( req, res, next) =>{
     }
 
     /*Update state*/
-    const post = await Post.findByIdAndUpdate(id, { $set: state }, { new: true, runValidators: true });
+    const post = await Post.findByIdAndUpdate(id, { $set: {state: state} }, { new: true, runValidators: true });
 
     return res.status(200).json({
         status: true,
