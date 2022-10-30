@@ -1,12 +1,24 @@
 require('dotenv').config()
 const AppError = require('../utils/appError')
 
+const prodValidationError = err => {
+  return new AppError(err.message, 400)
+}
+
 /*Defined Error 1*/
 const handleCastErrorDB = err => {
   const message = `Invalid ${err.path}: ${err.value}`
   return new AppError(message, 400)
 
 }
+
+
+const handleDuplicateFieldsDb = (err) => {
+    const value = err.keyValue.name
+    const message = `Duplicate field value < ${value} >: Please use another value!`;
+    return new AppError(message, 400)
+};
+
 
 /*Development error handler*/
 const devHandler = (err, req, res, next) => {
@@ -21,10 +33,12 @@ const devHandler = (err, req, res, next) => {
 
 /*Production error handler*/
 var prodHandler = (err, req, res, next) => {
+  console.log(err)
 
   /*Defined Errors*/
   if (err.name === 'ValidationError') {err = prodValidationError(err)}
   if (err.name === 'CastError') {err = handleCastErrorDB(err)}
+  if (err.code === 11000) {err = handleDuplicateFieldsDb(err)};
 
   /*Response Handler for defined errors*/
   if (err.isOperational){
