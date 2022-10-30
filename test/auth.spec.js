@@ -37,6 +37,7 @@ describe("Auth: Signup", () => {
     expect(response.body.newUser).toHaveProperty("last_name", "Augustina");
     expect(response.body.newUser).toHaveProperty("email", "tobi@mail.com");
   });
+  
 
   /*Test Login route*/
   it("should login a user", async () => {
@@ -47,6 +48,7 @@ describe("Auth: Signup", () => {
       email: "tobi@mail.com",
       password: "123456789",
     });
+
 
     // login user
     const response = await request(app)
