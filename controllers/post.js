@@ -19,7 +19,7 @@ exports.createPost = catchAsync( async(req, res, next) => {
         owner_id: owner,
     });
 
-    res.status(200).json({
+    res.status(201).json({
         status: true,
         newPost,
     });
@@ -135,7 +135,7 @@ exports.getAllPost = catchAsync( async(req, res, next) => {
     
     /*Pagination*/
     const page = +req.query.page || 1
-    const limit = +req.query.limit || 10
+    const limit = +req.query.limit || 20
     const skip = (page - 1) * limit
 
     /*Querying posts*/
