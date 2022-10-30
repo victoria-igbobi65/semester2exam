@@ -9,9 +9,10 @@ const postRoute = require('./routes/post')
 
 const app = express()
 
+app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use('/user', userRoute)
 app.use('/post', postRoute)
+app.use('/user', userRoute);
 
 
 app.use('*', (req, res, next) =>{
