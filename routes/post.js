@@ -9,6 +9,7 @@ require('../controllers/auth')/*Auth middleware*/
 postRouter
     .route('/')
     .post(passport.authenticate("jwt", {session: false}), postController.createPost)
+    .get(postController.getAllPost)
 
 postRouter
     .route("/:id")
