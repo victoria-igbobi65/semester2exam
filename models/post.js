@@ -6,19 +6,23 @@ const postSchema = new Schema({
     title: {
         type: String,
         required: [true, 'Please provide title!'],
-        unique: [true, 'Title must be unique!']
+        unique: [true, 'Title must be unique!'],
+        lowercase: true
     },
     description:{
         type: String,
-        required: [true, 'Please provide description!']
+        required: [true, 'Please provide description!'],
+        lowercase: true
     },
     tags: {
         type: String,
-        required: [true, 'Please provide tag!']
+        required: [true, 'Please provide tag!'],
+        lowercase: true
     },
     author:{
         type: String,
-        required: [true, 'Please provide author!']
+        required: [true, 'Please provide author!'],
+        lowercase: true
     },
     state:{
         type: String,
@@ -26,6 +30,7 @@ const postSchema = new Schema({
             values: ["draft", "published"],
             message: '{VALUE} is not supported!'
         },
+        lowercase: true,
         default: "draft"
     },
     read_count:{
