@@ -17,8 +17,8 @@ postRouter
 
 
 postRouter
-  .route("/me")
-  .get(passport.authenticate("jwt", { session: false }), postController.getAllMyPost);
+    .route("/me")
+    .get(passport.authenticate("jwt", { session: false }), postController.getAllMyPost);
 
 
 postRouter
