@@ -2,52 +2,51 @@ const mongoose = require('mongoose')
 
 
 const Schema = mongoose.Schema
-const postSchema = new Schema({
+const postSchema = new Schema(
+  {
     title: {
-        type: String,
-        required: [true, 'Please provide title!'],
-        unique: [true, 'Title must be unique!'],
-        lowercase: true
+      type: String,
+      required: [true, "Please provide title!"],
+      unique: [true, "Title must be unique!"],
+      lowercase: true,
     },
-    description:{
-        type: String,
-        required: [true, 'Please provide description!'],
-        lowercase: true
+    description: {
+      type: String,
+      required: [true, "Please provide description!"],
+      lowercase: true,
     },
-    tags: [{
+    tags: [
+      {
         type: String,
-        required: [true, 'Please provide tag!'],
-        lowercase: true
-    }],
-    author:{
-        type: String,
-        required: [true, 'Please provide author!'],
-        lowercase: true
-    },
-    state:{
-        type: String,
-        enum: ["draft", "published"],
+        required: [true, "Please provide tag!"],
         lowercase: true,
-        default: "draft"
+      },
+    ],
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
     },
-    read_count:{
-        type: Number,
-        default: 0
+    state: {
+      type: String,
+      enum: ["draft", "published"],
+      lowercase: true,
+      default: "draft",
+    },
+    read_count: {
+      type: Number,
+      default: 0,
     },
     reading_time: {
-        type: Number,
+      type: Number,
     },
-    body:{
-        type: String,
-        required: [true, 'Please provide body!']
+    body: {
+      type: String,
+      required: [true, "Please provide body!"],
     },
-    owner_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
-        required: true
-    }
-},
-{timestamps: true})
+  },
+  { timestamps: true }
+);
 
 
 postSchema.pre('save', async function(next){
