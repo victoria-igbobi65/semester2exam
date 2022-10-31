@@ -158,8 +158,8 @@ exports.getPostById = catchAsync( async (req, res, next) => {
 exports.getAllPost = catchAsync( async(req, res, next) => {
 
     //FILTERING
-    let queryObj = { ...req.query };
-    const excludedFields = ['page', 'sort', 'limit', 'fields',];
+    let queryObj = { ...req.query};
+    const excludedFields = ['page', 'sort', 'limit', 'fields', "author"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     
@@ -167,11 +167,17 @@ exports.getAllPost = catchAsync( async(req, res, next) => {
     queryObj = Object.fromEntries( Object.entries(queryObj).map(([key, value]) => [key, value.toLowerCase()]))
     const sortBy = req.query.sort? req.query.sort.split(",").join(" "): "-createdAt"
 
+    
+    /*Query build up*/
+    if (req.query.author){
+      queryObj.author = req.query.author;
+    }
     if (req.query.tags) {
       queryObj.tags = { $in: [req.query.tags] };
     }
-
+    queryObj.state = { $eq: "published" };
     
+  
     /*Pagination*/
     const page = +req.query.page || 1
     const limit = +req.query.limit || 20
