@@ -5,7 +5,7 @@ const catchAsync = require('../utils/catchAsync')
 /*Create Post*/
 exports.createPost = catchAsync( async(req, res, next) => {
 
-    const { title, description, tags, author, body } = req.body;
+    const { title, description, tags, body } = req.body;
     const owner = req.user._id;
 
     /*Post to save*/
@@ -13,9 +13,8 @@ exports.createPost = catchAsync( async(req, res, next) => {
       title: title,
       description: description,
       tags: (tags.trim()).split(/[, ]+/),
-      author: author,
+      author: owner,
       body: body,
-      owner_id: owner,
     });
 
     /*Success response*/
@@ -30,14 +29,23 @@ exports.createPost = catchAsync( async(req, res, next) => {
 exports.updatePost = catchAsync( async(req, res, next) => {
 
     const { id } = req.params;
-    var query = req.body;
+    var queryObj = req.body;
+    const excludedFields = [
+      "state",
+      "author",
+      "read_count",
+      "reading_time",
+      "createdAt",
+      "updatedAt",
+    ];
+    excludedFields.forEach((el) => delete queryObj[el]);
 
-    /*Delete state from query*/
-    if (req.body.state){
-        delete query.state
-    }
+    const post = await Post.findByIdAndUpdate(
+      id,
+      { $set: queryObj },
+      { new: true, runValidators: true }
+    ).populate({ path: "author", select: {first_name: 1, _id: 0}});
 
-    const post = await Post.findByIdAndUpdate(id, { $set: query }, { new: true, runValidators: true });
 
     /*Success response*/
     return res.status(200).json({
@@ -56,11 +64,12 @@ exports.updateState = catchAsync( async( req, res, next) =>{
 
     /*Check state of post if its already pudated*/
     if (postState == "published" && state ) {
-      return next(new AppError('Invalid Operation!', 400))
+      return next(new AppError('Post already published!', 400))
     }
 
     /*Update state*/
-    const post = await Post.findByIdAndUpdate(id, { $set: {state: state} }, { new: true, runValidators: true });
+    const post = await Post.findByIdAndUpdate(id, { $set: {state: state} }, { new: true, runValidators: true })
+                        .populate({path: 'author', select: {first_name: 1, _id: 0}})
 
     /*Success response*/
     return res.status(200).json({
@@ -77,7 +86,7 @@ exports.deletePost = catchAsync(async(req, res, next) => {
     const owner = req.user._id;
 
     /*Delete post*/
-    const post = await Post.deleteOne({ id: id, owner_id: owner });
+    const post = await Post.deleteOne({ id: id, author: owner });
 
     /*success response*/
     return res.status(200).json({
@@ -91,7 +100,7 @@ exports.deletePost = catchAsync(async(req, res, next) => {
 exports.getAllMyPost = catchAsync(async (req, res, next) => {
 
     const visitor = req.user._id;
-    var queryObj = { owner_id: visitor };
+    var queryObj = { author: visitor };
 
     /*Getting page and limit*/
     const page = +req.query.page || 1;
@@ -124,7 +133,7 @@ exports.getPostById = catchAsync( async (req, res, next) => {
 
     const post = await Post.findById(id)
                                 .where({state: {$eq: "published"}})
-                                .populate({path: "owner_id", select: {__v: 0}})
+                                .populate({path: "author", select: {__v: 0}})
                                 .select({__v: 0})
 
     /*Check if post was not found*/
@@ -150,7 +159,7 @@ exports.getAllPost = catchAsync( async(req, res, next) => {
 
     //FILTERING
     let queryObj = { ...req.query };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    const excludedFields = ['page', 'sort', 'limit', 'fields',];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     
@@ -170,10 +179,10 @@ exports.getAllPost = catchAsync( async(req, res, next) => {
 
     /*Querying posts*/
     const post = await Post
-                        .find(queryObj)
-                        .sort(sortBy)
-                        .skip(skip)
-                        .limit(limit)
+        .find(queryObj)
+        .sort(sortBy)
+        .skip(skip)
+        .limit(limit);
 
     /*Success response*/
     return res.status(200).json({
