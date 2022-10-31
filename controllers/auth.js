@@ -42,7 +42,7 @@ exports.protect = async (req, res, next) => {
   }
   
   /*Check if visitor is owner of post*/
-  if (post.owner_id.equals(visitor)){
+  if (post.author.equals(visitor)){
     req.state = post.state
     return next()
   }
