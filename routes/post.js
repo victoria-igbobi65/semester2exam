@@ -7,7 +7,7 @@ const auth = require('../controllers/auth')
 require('../controllers/auth')/*Auth middleware*/
 
 postRouter
-    .route('/update-state/:id')
+    .route('/state/:id')
     .patch(passport.authenticate("jwt", { session: false }), auth.protect, postController.updateState)
 
 postRouter

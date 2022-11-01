@@ -11,12 +11,14 @@ describe("Post Route", () => {
   beforeAll(async () => {
     conn = await connect();
 
-    await UserModel.create({
+   const newUser = await UserModel.create({
       first_name: "tobi",
       last_name: "Augustina",
       email: "tobi@mail.com",
       password: "123456789",
     });
+
+     user = newUser._id
 
     const loginResponse = await request(app)
       .post("/user/login")
@@ -27,6 +29,7 @@ describe("Post Route", () => {
       });
 
     token = loginResponse.body.token;
+
   });
 
   afterEach(async () => {
@@ -38,6 +41,32 @@ describe("Post Route", () => {
   });
 
 
+  /*Create a new post*/
+  it("create post", async () => {
+
+    /*Post body*/
+    const body = {
+      title: "Vac",
+      description: "don't even know how to go about exams",
+      tags: "Enjoyment",
+      author: user,
+      body: "I finally went to seychelles hurray!!!! I am using my week break from work to spoil myself me and my homies you wont even believe it..... Full gist loading",
+    };
+
+    const response = await request(app)
+      .post("/post")
+      .set("content-type", "application/json")
+      .set("Authorization", `Bearer ${token}`)
+      .send(body);
+
+    
+    expect(response.status).toBe(201)
+    expect(response.body.status).toBe(true)
+    expect(response.body).toHaveProperty('newPost')
+  })
+
+
+
   /*Testing the get all routes*/
   it("should return posts", async () => {
 
@@ -46,9 +75,8 @@ describe("Post Route", () => {
       title: "Vacation with the girls",
       description: "don't even know how to go about exams",
       tags: "Enjoyment",
-      author: "Vic",
+      author: user,
       body: "I finally went to seychelles hurray!!!! I am using my week break from work to spoil myself me and my homies you wont even believe it..... Full gist loading",
-      owner_id: "635e803007526ad682ef2063"
     });
 
     
@@ -56,7 +84,8 @@ describe("Post Route", () => {
       .get("/post")
       .set("content-type", "application/json")
       .set("Authorization", `Bearer ${token}`);
-    
+
+
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("status", true);
     expect(response.body).toHaveProperty("posts")
@@ -70,18 +99,17 @@ describe("Post Route", () => {
       title: "Vacation with the girls",
       description: "don't even know how to go about exams",
       tags: "Enjoyment",
-      author: "Vic",
+      author: "635e803007526ad682ef2063",
       body: "I finally went to seychelles hurray!!!! I am using my week break from work to spoil myself me and my homies you wont even believe it..... Full gist loading",
-      owner_id: "635e803007526ad682ef2063",
     });
 
     await PostModel.create({
       title: "Vacation",
       description: "don't even know how to go about exams",
       tags: "Enjoyment",
-      author: "Vic",
+      author: "635e803007526ad682ef2063",
       body: "I finally went to seychelles hurray!!!! I am using my week break from work to spoil myself me and my homies you wont even believe it..... Full gist loading",
-      owner_id: "635e803007526ad682ef2063",
+  
     });
 
     const response = await request(app)
@@ -89,23 +117,21 @@ describe("Post Route", () => {
       .set("content-type", "application/json")
       .set("Authorization", `Bearer ${token}`);
 
-    console.log(response.body.numberOfPosts)
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("posts");
     expect(response.body).toHaveProperty("status", true);
-    expect(response.body.numberOfPosts).toBe(2)
+
   });
 
   /*Testing the create post route*/
   it("should return orders with tag enjoyment", async () => {
 
-    await PostModel.create({
+    const d= await PostModel.create({
       title: "Vacation",
       description: "don't even know how to go about exams",
       tags: "Enjoyment",
-      author: "Vic",
+      author: "635e803007526ad682ef2063",
       body: "I finally went to seychelles hurray!!!! I am using my week break from work to spoil myself me and my homies you wont even believe it..... Full gist loading",
-      owner_id: "635e803007526ad682ef2063",
     });
 
     const response = await request(app)
@@ -113,11 +139,10 @@ describe("Post Route", () => {
       .set("content-type", "application/json")
       .set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(201)
+    expect(response.status).toBe(200)
     expect(response.body.status).toBe(true)
-    expect(response.body).toHaveProperty("title");
-
 
   })
+
 
 });

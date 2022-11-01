@@ -59,6 +59,7 @@ describe("Auth: Signup", () => {
         password: "123456789",
       });
 
+    // console.log(response)
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("token");
     expect(response.body.status).toBe(true)
