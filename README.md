@@ -23,7 +23,12 @@ This is an api for a blog app
 # Base URL
 
 
+***
+
+
 # Models
+***
+
 ## User
 Fields | data Type | constraints
 ---| --- | --- |
@@ -47,6 +52,7 @@ body | String | required
 timestamps | dateTime | required
 
 ## APIs
+
 
 ### SignUp User
 * Route:  /user/signup
@@ -76,6 +82,9 @@ Success
 	}
 }
 ```
+
+***
+
 ### Login User
 * Route: /user/login
 * Method: POST
@@ -96,6 +105,8 @@ Success
 	"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNWVkZjI4ZDZkOGZkODM0ODM0M2NlNiIsImlhdCI6MTY2NzI0MDMzMiwiZXhwIjoxNjY3Mjc2MzMyfQ.ZbSNObnUxADiNQlqHetE_rmGW-qPl-8nzGLmYy_ysL0"
 }
 ```
+
+***
 
 ### Create Blog Post
 * Route: /post
@@ -141,6 +152,8 @@ Success
 }
 ```
 
+***
+
 ### Update Post State
 * Route: /post/state/:id
 * Method: PATCH
@@ -182,6 +195,8 @@ Success
 }
 
 ```
+
+***
 
 ### Update Post
 * Route: /post/:id
@@ -226,6 +241,8 @@ Success
 }
 ```
 
+***
+
 ### Get Post By Id
 * Route: /post/:id
 * Method: GET
@@ -257,6 +274,9 @@ Success
 	}
 }
 ```
+
+
+*** 
 
 ### Get Posts By User
 * Route: /post/me
@@ -313,6 +333,7 @@ Success
  }
 ```
 
+***
 
 ### Delete Post
 * Route: /post/:id
@@ -329,6 +350,7 @@ Success
 }
 ```
 
+***
 ### Get All Posts
 * Route: post/
 * Method: GET
@@ -405,9 +427,9 @@ Success
 ```
 
 ***
-### Cntributor
+### Contributor
 
-Victoria Igbobi Chinecherem
+**Victoria Igbobi Chinecherem**
 
 
 
