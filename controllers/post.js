@@ -100,17 +100,12 @@ exports.deletePost = catchAsync(async(req, res, next) => {
 exports.getAllMyPost = catchAsync(async (req, res, next) => {
 
     const visitor = req.user._id;
-    var queryObj = { author: visitor };
+    const queryObj = req.query.state? { author: visitor, state: req.query.state} : {author: visitor}
 
     /*Getting page and limit*/
     const page = +req.query.page || 1;
     const limit = +req.query.limit || 10;
     const skip = (page - 1) * limit;
-
-    /*Handling state*/
-    if (req.query.state) {
-      queryObj.state = req.query.state;
-    }
 
     /*All posts by a User*/
     const visitorPosts = await Post
