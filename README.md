@@ -314,6 +314,98 @@ Success
 ```
 
 
+### Delete Post
+* Route: /post/:id
+* Method: GET
+* Header
+    * Authorizaton: Bearer ${token}
+* Response
+
+Success
+```
+{
+	"status": true,
+	"msg": null
+}
+```
+
+### Get All Posts
+* Route: post/
+* Method: GET
+* Query Param
+    * page (default 1)
+    * limit (default 20)
+    * author
+    * title
+    * tags
+    * sort (-read_count || read_count || -reading_time || reading_time || -timestamp || timestamp )
+
+* Responses
+
+Success
+```
+{
+	"status": true,
+	"page": 1,
+	"numberOfPosts": 3,
+	"posts": [
+		{
+			"_id": "635e803007526ad682ef2063",
+			"title": "business thoughts",
+			"description": "thinking of starting a cloth busines",
+			"tags": [
+				"business"
+			],
+			"author": "635e787cb8bf0baa21185cbd",
+			"state": "published",
+			"read_count": 7,
+			"body": "I finally went to seychelles hurray!!!! I am using my week break from work to spoil myself me and my homies you wont even believe it..... Full gist loading",
+			"createdAt": "2022-10-30T13:46:24.848Z",
+			"updatedAt": "2022-10-31T19:37:59.120Z",
+			"reading_time": 1,
+			"__v": 0
+		},
+		{
+			"_id": "635e80e007526ad682ef206f",
+			"title": "joy at last",
+			"description": "almost done with assignment",
+			"tags": [
+				"happy"
+			],
+			"author": "635e787cb8bf0baa21185cbd",
+			"state": "published",
+			"read_count": 3,
+			"body": "I finally went to seychelles hurray!!!! I am using my week break from work to spoil myself me and my homies you wont even believe it..... Full gist loading",
+			"createdAt": "2022-10-30T13:49:20.857Z",
+			"updatedAt": "2022-10-30T20:24:26.131Z",
+			"reading_time": 1,
+			"__v": 0
+		},
+		{
+			"_id": "63601724db705f507919c201",
+			"title": "life of peace",
+			"description": "don't even know how to go about exams",
+			"tags": [
+				"fufilment",
+				"joy",
+				"healing",
+				"enjoyment"
+			],
+			"author": "635edf28d6d8fd8348343ce6",
+			"state": "published",
+			"read_count": 0,
+			"body": "I finally went to seychelles hurray!!!! I am using my week break from work to spoil myself me and my homies you wont even believe it..... Full gist loading the world aroun us id shete fjeud dhdidxdhjdu dhdhd s sd dj djd jd jd d dele dyeke d fjd jd jedmndnjd gdtrewhskj ddhd djdd dh dhd hd hd fhf jg gjg gjg fjd dhd dhg gj fhd ddj ggd gk gjg k d fd h dhfbfdhf hg fhf hg",
+			"createdAt": "2022-10-31T18:42:44.070Z",
+			"updatedAt": "2022-10-31T18:46:05.087Z",
+			"reading_time": 1,
+			"__v": 0
+		}
+	]
+}
+```
+
+
+
 
 
 
