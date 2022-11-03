@@ -1,10 +1,10 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 
-const globalErrorHandler = require('./controllers/error')
+const globalErrorHandler = require('./src/controllers/error')
 const AppError = require('./utils/appError')
-const userRoute = require('./routes/user')
-const postRoute = require('./routes/post')
+const userRoute = require('./src/routes/user')
+const postRoute = require('./src/routes/post')
 
 
 const app = express()
