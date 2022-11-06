@@ -23,6 +23,8 @@ This is an api for a blog app
 
 # Base URL
 
+***
+https://frightened-duck-bracelet.cyclic.app/
 
 ***
 
