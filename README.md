@@ -18,10 +18,13 @@ This is an api for a blog app
 * Install Nodejs, mongoDB
 * Pull this repo
 * Update env with .env
-* run ``` npm run start:dev ```
+* run ``` npm run start:dev ``` for development
+* run ```npm run start:prod``` for production
 
 # Base URL
 
+***
+https://frightened-duck-bracelet.cyclic.app/
 
 ***
 
@@ -425,6 +428,12 @@ Success
 	]
 }
 ```
+
+***
+### Tests
+* To run test
+     * run ```npm run test```
+	
 
 ***
 ### Contributor
